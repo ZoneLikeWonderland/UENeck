@@ -4,6 +4,7 @@
 #include "AnimationRuntime.h"
 #include "Animation/AnimInstanceProxy.h"
 #include "ZLWAnimNode.h"
+#include "MLP.h"
 
 FZLWAnimNode::FZLWAnimNode()
 {
@@ -17,6 +18,9 @@ void FZLWAnimNode::Initialize_AnyThread(const FAnimationInitializeContext& Conte
 	Super::Initialize_AnyThread(Context);
 	SourcePose.Initialize(Context);
 
+	MLP::initialize();
+	auto mlp = MLP();
+	mlp.run({ 1,1,1 });
 }
 
 void FZLWAnimNode::CacheBones_AnyThread(const FAnimationCacheBonesContext& Context)
@@ -137,7 +141,7 @@ void FZLWAnimNode::ReadBones(FPoseContext& SourceData) {
 
 	const FBoneContainer& BoneContainer = SourceData.Pose.GetBoneContainer();
 
-	UE_LOG(LogTemp, Warning, TEXT("======================="));
+	//UE_LOG(LogTemp, Warning, TEXT("======================="));
 
 	for (int i = 0; i < BoneToModify_list.Num(); i++) {
 		auto BoneToModify = BoneToModify_list[i];
@@ -163,7 +167,7 @@ void FZLWAnimNode::ReadBones(FPoseContext& SourceData) {
 		FTransform BoneTM_to_ref = BoneTM_to_parent;
 		BoneTM_to_ref.SetToRelativeTransform(BoneTM_ref);
 
-		UE_LOG(LogTemp, Warning, TEXT("current BoneTM_to_ref[%d] is %s"), i, *BoneTM_to_ref.GetRotation().Euler().ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("current BoneTM_to_ref[%d] is %s"), i, *BoneTM_to_ref.GetRotation().Euler().ToString());
 
 		FMatrix44d matrix = BoneTM_to_ref.GetRotation().ToMatrix();
 		BoneTM_72_list[i * 9 + 0] = matrix.M[0][0] - 1;
@@ -176,11 +180,11 @@ void FZLWAnimNode::ReadBones(FPoseContext& SourceData) {
 		BoneTM_72_list[i * 9 + 7] = matrix.M[1][2] * -1;
 		BoneTM_72_list[i * 9 + 8] = matrix.M[2][2] - 1;
 
-		if (i == 1) {
-			UE_LOG(LogTemp, Warning, TEXT("current BoneTM_72_list is %.3f %.3f %.3f"), BoneTM_72_list[i * 9 + 0], BoneTM_72_list[i * 9 + 1], BoneTM_72_list[i * 9 + 2]);
-			UE_LOG(LogTemp, Warning, TEXT("current BoneTM_72_list is %.3f %.3f %.3f"), BoneTM_72_list[i * 9 + 3], BoneTM_72_list[i * 9 + 4], BoneTM_72_list[i * 9 + 5]);
-			UE_LOG(LogTemp, Warning, TEXT("current BoneTM_72_list is %.3f %.3f %.3f"), BoneTM_72_list[i * 9 + 6], BoneTM_72_list[i * 9 + 7], BoneTM_72_list[i * 9 + 8]);
-		}
+		//if (i == 1) {
+		//	UE_LOG(LogTemp, Warning, TEXT("current BoneTM_72_list is %.3f %.3f %.3f"), BoneTM_72_list[i * 9 + 0], BoneTM_72_list[i * 9 + 1], BoneTM_72_list[i * 9 + 2]);
+		//	UE_LOG(LogTemp, Warning, TEXT("current BoneTM_72_list is %.3f %.3f %.3f"), BoneTM_72_list[i * 9 + 3], BoneTM_72_list[i * 9 + 4], BoneTM_72_list[i * 9 + 5]);
+		//	UE_LOG(LogTemp, Warning, TEXT("current BoneTM_72_list is %.3f %.3f %.3f"), BoneTM_72_list[i * 9 + 6], BoneTM_72_list[i * 9 + 7], BoneTM_72_list[i * 9 + 8]);
+		//}
 	}
 
 
